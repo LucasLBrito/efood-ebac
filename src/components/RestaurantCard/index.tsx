@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import type { Restaurante } from '../../types'
 import Tag from '../Tag'
+import star from '../../assets/star.png'
 
 const Card = styled.div`
   display: flex;
@@ -25,20 +26,21 @@ const ImageWrapper = styled.div`
 const Tags = styled.div`
   position: absolute;
   top: 16px;
-  right: 8px;
+  right: 0;
   display: flex;
   gap: 8px;
 `
 
 const InfoPanel = styled.div`
   background-color: ${theme.colors.white};
-  border: 1px solid ${theme.colors.salmon};
-  border-top: none;
+  border-left: 1px solid ${theme.colors.salmon};
+  border-right: 1px solid ${theme.colors.salmon};
+  border-bottom: 1px solid ${theme.colors.salmon};
   padding: 8px;
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 181px;
 `
 
 const CardHeader = styled.div`
@@ -60,6 +62,7 @@ const Rating = styled.div`
   color: ${theme.colors.salmon};
   font-size: 18px;
   font-weight: 700;
+  flex-shrink: 0;
 
   img {
     width: 21px;
@@ -72,6 +75,7 @@ const Description = styled.p`
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
+  flex: 1;
 `
 
 const Button = styled.button`
@@ -81,10 +85,10 @@ const Button = styled.button`
   font-size: 14px;
   font-weight: 700;
   font-family: inherit;
-  padding: 4px 8px;
+  width: 82px;
+  height: 24px;
   cursor: pointer;
   align-self: flex-start;
-  margin-top: auto;
 
   &:hover {
     opacity: 0.9;
@@ -112,10 +116,7 @@ const RestaurantCard = ({ restaurante }: Props) => {
           <Title>{restaurante.titulo}</Title>
           <Rating>
             <span>{restaurante.avaliacao}</span>
-            <img
-              src="https://img.icons8.com/ios-filled/21/e66767/star.png"
-              alt="estrela"
-            />
+            <img src={star} alt="estrela" />
           </Rating>
         </CardHeader>
         <Description>{restaurante.descricao}</Description>

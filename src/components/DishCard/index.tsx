@@ -6,6 +6,8 @@ const Card = styled.div`
   background-color: ${theme.colors.salmon};
   display: flex;
   flex-direction: column;
+  padding: 8px;
+  gap: 8px;
 `
 
 const DishImage = styled.img`
@@ -16,7 +18,6 @@ const DishImage = styled.img`
 `
 
 const Content = styled.div`
-  padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -34,6 +35,7 @@ const DishDescription = styled.p`
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
+  flex: 1;
 `
 
 const Button = styled.button`
@@ -43,9 +45,9 @@ const Button = styled.button`
   font-size: 14px;
   font-weight: 700;
   font-family: inherit;
-  padding: 4px 8px;
-  cursor: pointer;
   width: 100%;
+  height: 24px;
+  cursor: pointer;
   margin-top: auto;
 
   &:hover {

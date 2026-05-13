@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import logo from '../../assets/logo.png'
+import instagram from '../../assets/instagram.png'
+import facebook from '../../assets/facebook.png'
+import twitter from '../../assets/twitter.png'
 
 const FooterWrapper = styled.footer`
   background-color: ${theme.colors.cream};
@@ -42,18 +45,18 @@ const Footer = () => (
     <Logo src={logo} alt="eFood" />
     <SocialLinks>
       <a href="#" aria-label="Instagram">
-        <img src="https://img.icons8.com/ios-filled/24/e66767/instagram-new.png" alt="Instagram" />
+        <img src={instagram} alt="Instagram" />
       </a>
       <a href="#" aria-label="Facebook">
-        <img src="https://img.icons8.com/ios-filled/24/e66767/facebook.png" alt="Facebook" />
+        <img src={facebook} alt="Facebook" />
       </a>
       <a href="#" aria-label="Twitter">
-        <img src="https://img.icons8.com/ios-filled/24/e66767/twitter.png" alt="Twitter" />
+        <img src={twitter} alt="Twitter" />
       </a>
     </SocialLinks>
     <Copyright>
-      A efood é uma plataforma para divulgação de estabelecimentos, a responsabilidade pela entrega,
-      qualidade dos produtos é toda do estabelecimento contratado.
+      A efood é uma plataforma para divulgação de estabelecimentos, a responsabilidade pela
+      entrega, qualidade dos produtos é toda do estabelecimento contratado.
     </Copyright>
   </FooterWrapper>
 )

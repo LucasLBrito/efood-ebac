@@ -7,22 +7,24 @@ import logo from '../../assets/logo.png'
 const HeroWrapper = styled.header`
   background-image: url(${heroBg});
   background-size: cover;
-  background-position: center;
-  padding: 40px 16px 80px;
+  background-position: center top;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 80px;
+  padding-top: 40px;
+  padding-bottom: 80px;
+  gap: 140px;
 `
 
 const NavWrapper = styled.header`
   background-image: url(${heroBg});
   background-size: cover;
   background-position: center top;
-  padding: 24px 171px;
+  height: 163px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 171px;
 `
 
 const Logo = styled.img`
@@ -33,6 +35,7 @@ const NavLink = styled(Link)`
   color: ${theme.colors.salmon};
   font-size: 18px;
   font-weight: 900;
+  white-space: nowrap;
 `
 
 const HeroTitle = styled.h1`
@@ -40,7 +43,7 @@ const HeroTitle = styled.h1`
   font-size: 36px;
   font-weight: 900;
   text-align: center;
-  max-width: 600px;
+  max-width: 700px;
   line-height: 1.2;
 `
 
@@ -54,7 +57,11 @@ const Header = ({ variant, cartCount = 0 }: Props) => {
     return (
       <HeroWrapper>
         <Logo src={logo} alt="eFood" />
-        <HeroTitle>Viva experiências gastronômicas no conforto da sua casa</HeroTitle>
+        <HeroTitle>
+          Viva experiências gastronômicas
+          <br />
+          no conforto da sua casa
+        </HeroTitle>
       </HeroWrapper>
     )
   }
