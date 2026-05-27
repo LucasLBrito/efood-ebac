@@ -2,7 +2,25 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import heroBg from '../../assets/hero-bg.png'
-import logo from '../../assets/logo.png'
+
+const BrandLogo = styled.div`
+  display: inline-flex;
+  align-items: center;
+  font-family: ${theme.fonts.family};
+  font-size: 20px;
+  font-weight: 900;
+  color: ${theme.colors.salmon};
+  border: 2px solid ${theme.colors.salmon};
+  padding: 7px 16px;
+  letter-spacing: 0.5px;
+  background: transparent;
+  user-select: none;
+
+  span {
+    font-weight: 100;
+    margin-right: 2px;
+  }
+`
 
 const HeroWrapper = styled.header`
   background-image: url(${heroBg});
@@ -27,10 +45,6 @@ const NavWrapper = styled.header`
   padding: 0 171px;
 `
 
-const Logo = styled.img`
-  height: 57.5px;
-`
-
 const NavLink = styled(Link)`
   color: ${theme.colors.salmon};
   font-size: 18px;
@@ -52,11 +66,17 @@ type Props = {
   cartCount?: number
 }
 
+const Logo = () => (
+  <BrandLogo>
+    <span>Brito</span>efood
+  </BrandLogo>
+)
+
 const Header = ({ variant, cartCount = 0 }: Props) => {
   if (variant === 'home') {
     return (
       <HeroWrapper>
-        <Logo src={logo} alt="eFood" />
+        <Logo />
         <HeroTitle>
           Viva experiências gastronômicas
           <br />
@@ -69,7 +89,7 @@ const Header = ({ variant, cartCount = 0 }: Props) => {
   return (
     <NavWrapper>
       <NavLink to="/">Restaurantes</NavLink>
-      <Logo src={logo} alt="eFood" />
+      <Logo />
       <NavLink to="/" style={{ textAlign: 'right' }}>
         {cartCount} produto(s) no carrinho
       </NavLink>
