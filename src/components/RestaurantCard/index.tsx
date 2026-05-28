@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import type { Restaurante } from '../../types'
 import Tag from '../Tag'
-import star from '../../assets/star.png'
+import { IconStar } from '../Icons'
 
 const Card = styled.div`
   display: flex;
@@ -58,15 +58,16 @@ const Title = styled.h3`
 const Rating = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: ${theme.colors.salmon};
   font-size: 18px;
   font-weight: 700;
   flex-shrink: 0;
 
-  img {
+  svg {
     width: 21px;
     height: 21px;
+    fill: ${theme.colors.salmon};
   }
 `
 
@@ -116,7 +117,7 @@ const RestaurantCard = ({ restaurante }: Props) => {
           <Title>{restaurante.titulo}</Title>
           <Rating>
             <span>{restaurante.avaliacao}</span>
-            <img src={star} alt="estrela" />
+            <IconStar />
           </Rating>
         </CardHeader>
         <Description>{restaurante.descricao}</Description>

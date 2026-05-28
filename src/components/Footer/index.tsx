@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
-import instagram from '../../assets/instagram.png'
-import facebook from '../../assets/facebook.png'
-import twitter from '../../assets/twitter.png'
+import { IconInstagram, IconFacebook, IconTwitter } from '../Icons'
 
 const FooterWrapper = styled.footer`
   background-color: ${theme.colors.cream};
@@ -34,15 +32,18 @@ const BrandLogo = styled.div`
 
 const SocialLinks = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 12px;
 
   a {
     display: flex;
-  }
+    align-items: center;
+    justify-content: center;
+    color: ${theme.colors.salmon};
+    transition: opacity 0.2s;
 
-  img {
-    width: 24px;
-    height: 24px;
+    &:hover {
+      opacity: 0.7;
+    }
   }
 `
 
@@ -61,13 +62,13 @@ const Footer = () => (
     </BrandLogo>
     <SocialLinks>
       <a href="#" aria-label="Instagram">
-        <img src={instagram} alt="Instagram" />
+        <IconInstagram />
       </a>
       <a href="#" aria-label="Facebook">
-        <img src={facebook} alt="Facebook" />
+        <IconFacebook />
       </a>
       <a href="#" aria-label="Twitter">
-        <img src={twitter} alt="Twitter" />
+        <IconTwitter />
       </a>
     </SocialLinks>
     <Copyright>
