@@ -1,12 +1,13 @@
 import type { Restaurante } from '../types'
-import { restaurants } from '../data/restaurants'
+
+const BASE_URL = 'https://api-ebac.vercel.app/api/efood'
 
 export const getRestaurantes = async (): Promise<Restaurante[]> => {
-  return restaurants
+  const response = await fetch(`${BASE_URL}/restaurantes`)
+  return response.json()
 }
 
 export const getRestaurante = async (id: number): Promise<Restaurante> => {
-  const found = restaurants.find((r) => r.id === id)
-  if (!found) throw new Error(`Restaurante ${id} não encontrado`)
-  return found
+  const response = await fetch(`${BASE_URL}/restaurantes/${id}`)
+  return response.json()
 }

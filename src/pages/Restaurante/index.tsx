@@ -4,8 +4,9 @@ import styled from 'styled-components'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import DishCard from '../../components/DishCard'
+import Modal from '../../components/Modal'
 import { getRestaurante } from '../../services/api'
-import type { Restaurante as RestauranteType } from '../../types'
+import type { Restaurante as RestauranteType, Prato } from '../../types'
 import { theme } from '../../styles/theme'
 
 const CoverWrapper = styled.section`
@@ -65,6 +66,7 @@ const Grid = styled.div`
 const Restaurante = () => {
   const { id } = useParams()
   const [restaurante, setRestaurante] = useState<RestauranteType | null>(null)
+  const [selectedDish, setSelectedDish] = useState<Prato | null>(null)
 
   useEffect(() => {
     if (id) {
@@ -88,11 +90,22 @@ const Restaurante = () => {
       <Main>
         <Grid>
           {restaurante.cardapio.map((prato) => (
-            <DishCard key={prato.id} prato={prato} />
+            <DishCard
+              key={prato.id}
+              prato={prato}
+              onSelect={setSelectedDish}
+            />
           ))}
         </Grid>
       </Main>
       <Footer />
+
+      {selectedDish && (
+        <Modal
+          prato={selectedDish}
+          onClose={() => setSelectedDish(null)}
+        />
+      )}
     </>
   )
 }

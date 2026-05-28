@@ -57,15 +57,16 @@ const Button = styled.button`
 
 type Props = {
   prato: Prato
+  onSelect: (prato: Prato) => void
 }
 
-const DishCard = ({ prato }: Props) => (
+const DishCard = ({ prato, onSelect }: Props) => (
   <Card>
     <DishImage src={prato.foto} alt={prato.nome} />
     <Content>
       <DishName>{prato.nome}</DishName>
       <DishDescription>{prato.descricao}</DishDescription>
-      <Button>Adicionar ao carrinho</Button>
+      <Button onClick={() => onSelect(prato)}>Mais informações</Button>
     </Content>
   </Card>
 )
