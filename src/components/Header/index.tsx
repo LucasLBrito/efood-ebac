@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import heroBg from '../../assets/hero-bg.png'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { openCart } from '../../store/cartSlice'
 
 const BrandLogo = styled.div`
   display: inline-flex;
@@ -52,6 +54,23 @@ const NavLink = styled(Link)`
   white-space: nowrap;
 `
 
+const CartButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${theme.colors.salmon};
+  font-size: 18px;
+  font-weight: 900;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: right;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
 const HeroTitle = styled.h1`
   color: ${theme.colors.salmon};
   font-size: 36px;
@@ -63,7 +82,6 @@ const HeroTitle = styled.h1`
 
 type Props = {
   variant: 'home' | 'perfil'
-  cartCount?: number
 }
 
 const Logo = () => (
@@ -72,7 +90,12 @@ const Logo = () => (
   </BrandLogo>
 )
 
-const Header = ({ variant, cartCount = 0 }: Props) => {
+const Header = ({ variant }: Props) => {
+  const dispatch = useAppDispatch()
+  const totalItems = useAppSelector((state) =>
+    state.cart.items.reduce((acc, item) => acc + item.quantidade, 0),
+  )
+
   if (variant === 'home') {
     return (
       <HeroWrapper>
@@ -90,9 +113,9 @@ const Header = ({ variant, cartCount = 0 }: Props) => {
     <NavWrapper>
       <NavLink to="/">Restaurantes</NavLink>
       <Logo />
-      <NavLink to="/" style={{ textAlign: 'right' }}>
-        {cartCount} produto(s) no carrinho
-      </NavLink>
+      <CartButton onClick={() => dispatch(openCart())}>
+        {totalItems} produto(s) no carrinho
+      </CartButton>
     </NavWrapper>
   )
 }

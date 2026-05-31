@@ -1,6 +1,8 @@
 import styled, { keyframes } from 'styled-components'
 import { theme } from '../../styles/theme'
 import type { Prato } from '../../types'
+import { useAppDispatch } from '../../store/hooks'
+import { addItem, openCart } from '../../store/cartSlice'
 
 const fadeIn = keyframes`
   from { opacity: 0; }
@@ -100,6 +102,7 @@ const AddButton = styled.button`
   cursor: pointer;
   align-self: flex-start;
   white-space: nowrap;
+  transition: opacity 0.15s;
 
   &:hover {
     opacity: 0.88;
@@ -115,20 +118,30 @@ type Props = {
 }
 
 const Modal = ({ prato, onClose }: Props) => {
+  const dispatch = useAppDispatch()
+
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose()
+  }
+
+  const handleAddToCart = () => {
+    dispatch(addItem(prato))
+    dispatch(openCart())
+    onClose()
   }
 
   return (
     <Overlay onClick={handleOverlayClick}>
       <ModalBox>
-        <CloseButton onClick={onClose} aria-label="Fechar">×</CloseButton>
+        <CloseButton onClick={onClose} aria-label="Fechar">
+          ×
+        </CloseButton>
         <DishImage src={prato.foto} alt={prato.nome} />
         <Content>
           <DishTitle>{prato.nome}</DishTitle>
           <DishDescription>{prato.descricao}</DishDescription>
           <Portion>Serve: {prato.porcao}</Portion>
-          <AddButton>
+          <AddButton onClick={handleAddToCart}>
             Adicionar ao carrinho — {formatPrice(prato.preco)}
           </AddButton>
         </Content>
