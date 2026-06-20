@@ -8,6 +8,7 @@ import { openCart } from '../../store/cartSlice'
 
 const HeroWrapper = styled.header`
   background-image: url(${heroBg});
+  background-color: ${theme.colors.cream};
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center top;
@@ -21,6 +22,7 @@ const HeroWrapper = styled.header`
 
 const NavWrapper = styled.header`
   background-image: url(${heroBg});
+  background-color: ${theme.colors.cream};
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center top;
