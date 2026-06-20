@@ -9,6 +9,7 @@ import { openCart } from '../../store/cartSlice'
 const HeroWrapper = styled.header`
   background-image: url(${heroBg});
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center top;
   display: flex;
   flex-direction: column;
@@ -21,6 +22,7 @@ const HeroWrapper = styled.header`
 const NavWrapper = styled.header`
   background-image: url(${heroBg});
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center top;
   height: 163px;
 `
@@ -36,6 +38,7 @@ const NavInner = styled.div`
 `
 
 const Logo = styled.img`
+  width: 125px;
   height: 57.5px;
 `
 
