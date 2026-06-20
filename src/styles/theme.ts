@@ -1,10 +1,10 @@
 export const theme = {
   colors: {
-    beige: '#f0fdf4',
-    salmon: '#1b4332',
-    cream: '#d8f3dc',
+    beige: '#fff8f2',
+    salmon: '#e66767',
+    cream: '#ffebd9',
     white: '#ffffff',
-    overlay: 'rgba(0,0,0,0.55)',
+    overlay: 'rgba(0,0,0,0.5)',
   },
   fonts: {
     family: "'Roboto', sans-serif",

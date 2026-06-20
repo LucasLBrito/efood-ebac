@@ -2,27 +2,9 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
 import heroBg from '../../assets/hero-bg.png'
+import logo from '../../assets/logo.png'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { openCart } from '../../store/cartSlice'
-
-const BrandLogo = styled.div`
-  display: inline-flex;
-  align-items: center;
-  font-family: ${theme.fonts.family};
-  font-size: 20px;
-  font-weight: 900;
-  color: ${theme.colors.salmon};
-  border: 2px solid ${theme.colors.salmon};
-  padding: 7px 16px;
-  letter-spacing: 0.5px;
-  background: transparent;
-  user-select: none;
-
-  span {
-    font-weight: 100;
-    margin-right: 2px;
-  }
-`
 
 const HeroWrapper = styled.header`
   background-image: url(${heroBg});
@@ -41,10 +23,20 @@ const NavWrapper = styled.header`
   background-size: cover;
   background-position: center top;
   height: 163px;
+`
+
+const NavInner = styled.div`
+  max-width: 1024px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 171px;
+`
+
+const Logo = styled.img`
+  height: 57.5px;
 `
 
 const NavLink = styled(Link)`
@@ -84,12 +76,6 @@ type Props = {
   variant: 'home' | 'perfil'
 }
 
-const Logo = () => (
-  <BrandLogo>
-    <span>Brito</span>efood
-  </BrandLogo>
-)
-
 const Header = ({ variant }: Props) => {
   const dispatch = useAppDispatch()
   const totalItems = useAppSelector((state) =>
@@ -99,7 +85,7 @@ const Header = ({ variant }: Props) => {
   if (variant === 'home') {
     return (
       <HeroWrapper>
-        <Logo />
+        <Logo src={logo} alt="efood" />
         <HeroTitle>
           Viva experiências gastronômicas
           <br />
@@ -111,11 +97,13 @@ const Header = ({ variant }: Props) => {
 
   return (
     <NavWrapper>
-      <NavLink to="/">Restaurantes</NavLink>
-      <Logo />
-      <CartButton onClick={() => dispatch(openCart())}>
-        {totalItems} produto(s) no carrinho
-      </CartButton>
+      <NavInner>
+        <NavLink to="/">Restaurantes</NavLink>
+        <Logo src={logo} alt="efood" />
+        <CartButton onClick={() => dispatch(openCart())}>
+          {totalItems} produto(s) no carrinho
+        </CartButton>
+      </NavInner>
     </NavWrapper>
   )
 }
