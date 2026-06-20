@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
-import heroBg from '../../assets/hero-bg.png'
-import logo from '../../assets/logo.png'
+import heroBg from '../../assets/hero-bg.svg'
+import logo from '../../assets/logo.svg'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { openCart } from '../../store/cartSlice'
 

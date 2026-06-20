@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
-import logo from '../../assets/logo.png'
+import logo from '../../assets/logo.svg'
 import { IconInstagram, IconFacebook, IconTwitter } from '../Icons'
 
 const FooterWrapper = styled.footer`
