@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components'
 import { theme } from '../../styles/theme'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { removeItem, closeCart, clearCart } from '../../store/cartSlice'
+import { IconTrash } from '../Icons'
 
 /* ─── animations ─────────────────────────────────────────────── */
 const slideIn = keyframes`
@@ -33,11 +34,7 @@ const Panel = styled.aside`
 `
 
 const PanelInner = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 32px 16px;
-  gap: 0;
+  padding: 32px 8px;
 `
 
 /* ─── typography ─────────────────────────────────────────────── */
@@ -45,7 +42,7 @@ const SectionTitle = styled.h2`
   color: ${theme.colors.cream};
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `
 
 const BodyText = styled.p`
@@ -66,15 +63,15 @@ const ItemList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1;
 `
 
 const Item = styled.li`
+  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 8px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: ${theme.colors.cream};
 `
 
 const ItemImage = styled.img`
@@ -87,73 +84,68 @@ const ItemImage = styled.img`
 
 const ItemInfo = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `
 
 const ItemName = styled.p`
-  color: ${theme.colors.cream};
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 4px;
+  color: ${theme.colors.salmon};
+  font-size: 18px;
+  font-weight: 900;
 `
 
 const ItemPrice = styled.p`
-  color: ${theme.colors.cream};
+  color: ${theme.colors.salmon};
   font-size: 14px;
 `
 
 const RemoveBtn = styled.button`
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
   background: transparent;
-  border: 1px solid ${theme.colors.cream};
-  color: ${theme.colors.cream};
-  width: 20px;
-  height: 20px;
-  font-size: 14px;
+  border: none;
+  padding: 0;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  opacity: 0.75;
-  &:hover { opacity: 1; }
-`
+  transition: opacity 0.15s;
 
-const Divider = styled.hr`
-  border: none;
-  border-top: 1px solid ${theme.colors.cream};
-  opacity: 0.25;
-  margin: 24px 0 16px;
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${theme.colors.salmon};
+  }
+
+  &:hover {
+    opacity: 0.7;
+  }
 `
 
 const TotalRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
-`
-
-const TotalLabel = styled.span`
   color: ${theme.colors.cream};
   font-size: 14px;
   font-weight: 700;
-`
-
-const TotalValue = styled.span`
-  color: ${theme.colors.cream};
-  font-size: 14px;
-  font-weight: 700;
+  margin: 40px 0 16px;
 `
 
 /* ─── form ───────────────────────────────────────────────────── */
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
-  flex: 1;
+  gap: 8px;
+  margin-bottom: 8px;
 `
 
 const FormRow = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 34px;
+
+  & > * {
+    flex: 1;
+  }
 `
 
 const Label = styled.label`
@@ -164,8 +156,9 @@ const Label = styled.label`
 
 const Input = styled.input`
   background-color: ${theme.colors.cream};
-  border: none;
-  padding: 8px;
+  border: 1px solid ${theme.colors.cream};
+  height: 32px;
+  padding: 0 8px;
   font-size: 14px;
   font-family: inherit;
   color: ${theme.colors.salmon};
@@ -182,8 +175,7 @@ const BtnArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: auto;
-  padding-top: 16px;
+  margin-top: 16px;
 `
 
 const PrimaryBtn = styled.button`
@@ -191,28 +183,22 @@ const PrimaryBtn = styled.button`
   color: ${theme.colors.salmon};
   border: none;
   width: 100%;
-  padding: 10px;
+  padding: 4px;
+  height: 24px;
   font-size: 14px;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.88; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
-`
 
-const GhostBtn = styled.button`
-  background: transparent;
-  border: none;
-  color: ${theme.colors.cream};
-  font-size: 14px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  width: 100%;
-  padding: 6px;
-  opacity: 0.8;
-  &:hover { opacity: 1; }
+  &:hover {
+    opacity: 0.88;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 /* ─── utils ──────────────────────────────────────────────────── */
@@ -311,44 +297,39 @@ const Cart = () => {
   }
 
   /* ── step renders ─────────────────────────────────────────── */
-  const renderCart = () => (
-    <>
-      <SectionTitle>Carrinho</SectionTitle>
-      {items.length === 0 ? (
-        <EmptyMessage>Adicione itens ao carrinho para continuar.</EmptyMessage>
-      ) : (
-        <>
-          <ItemList>
-            {items.map((item) => (
-              <Item key={item.id}>
-                <ItemImage src={item.foto} alt={item.nome} />
-                <ItemInfo>
-                  <ItemName>{item.nome}</ItemName>
-                  <ItemPrice>{fmt(item.preco)}</ItemPrice>
-                </ItemInfo>
-                <RemoveBtn
-                  onClick={() => dispatch(removeItem(item.id))}
-                  aria-label={`Remover ${item.nome}`}
-                >
-                  ×
-                </RemoveBtn>
-              </Item>
-            ))}
-          </ItemList>
-          <Divider />
-          <TotalRow>
-            <TotalLabel>Valor total</TotalLabel>
-            <TotalValue>{fmt(total)}</TotalValue>
-          </TotalRow>
-          <BtnArea>
-            <PrimaryBtn onClick={() => setStep('delivery')}>
-              Continuar com a entrega
-            </PrimaryBtn>
-          </BtnArea>
-        </>
-      )}
-    </>
-  )
+  const renderCart = () =>
+    items.length === 0 ? (
+      <EmptyMessage>Adicione itens ao carrinho para continuar.</EmptyMessage>
+    ) : (
+      <>
+        <ItemList>
+          {items.map((item) => (
+            <Item key={item.id}>
+              <ItemImage src={item.foto} alt={item.nome} />
+              <ItemInfo>
+                <ItemName>{item.nome}</ItemName>
+                <ItemPrice>{fmt(item.preco)}</ItemPrice>
+              </ItemInfo>
+              <RemoveBtn
+                onClick={() => dispatch(removeItem(item.id))}
+                aria-label={`Remover ${item.nome}`}
+              >
+                <IconTrash />
+              </RemoveBtn>
+            </Item>
+          ))}
+        </ItemList>
+        <TotalRow>
+          <span>Valor total</span>
+          <span>{fmt(total)}</span>
+        </TotalRow>
+        <BtnArea>
+          <PrimaryBtn onClick={() => setStep('delivery')}>
+            Continuar com a entrega
+          </PrimaryBtn>
+        </BtnArea>
+      </>
+    )
 
   const renderDelivery = () => (
     <>
@@ -394,16 +375,14 @@ const Cart = () => {
         <PrimaryBtn onClick={() => setStep('payment')}>
           Continuar com o pagamento
         </PrimaryBtn>
-        <GhostBtn onClick={() => setStep('cart')}>Voltar ao carrinho</GhostBtn>
+        <PrimaryBtn onClick={() => setStep('cart')}>Voltar para o carrinho</PrimaryBtn>
       </BtnArea>
     </>
   )
 
   const renderPayment = () => (
     <>
-      <SectionTitle>
-        Pagamento — {fmt(total)}
-      </SectionTitle>
+      <SectionTitle>Pagamento - Valor a pagar {fmt(total)}</SectionTitle>
 
       <FormGroup>
         <Label>Nome no cartão</Label>
@@ -444,16 +423,18 @@ const Cart = () => {
 
       <BtnArea>
         <PrimaryBtn onClick={handleFinalize} disabled={loading}>
-          {loading ? 'Finalizando pedido...' : 'Finalizar pedido'}
+          {loading ? 'Finalizando pagamento...' : 'Finalizar pagamento'}
         </PrimaryBtn>
-        <GhostBtn onClick={() => setStep('delivery')}>Voltar à entrega</GhostBtn>
+        <PrimaryBtn onClick={() => setStep('delivery')}>
+          Voltar para a edição de endereço
+        </PrimaryBtn>
       </BtnArea>
     </>
   )
 
   const renderConfirmation = () => (
     <>
-      <SectionTitle>Pedido realizado — {orderId}</SectionTitle>
+      <SectionTitle>Pedido realizado - {orderId}</SectionTitle>
       <BodyText>
         Estamos felizes em informar que seu pedido já está em processo de preparação e, em
         breve, será entregue para você.
