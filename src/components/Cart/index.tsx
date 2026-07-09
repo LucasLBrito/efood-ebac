@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { theme } from '../../styles/theme'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { removeItem, closeCart, clearCart } from '../../store/cartSlice'
@@ -154,9 +156,9 @@ const Label = styled.label`
   font-weight: 700;
 `
 
-const Input = styled.input`
+const Input = styled.input<{ $error?: boolean }>`
   background-color: ${theme.colors.cream};
-  border: 1px solid ${theme.colors.cream};
+  border: 2px solid ${(p) => (p.$error ? '#8b1a1a' : theme.colors.cream)};
   height: 32px;
   padding: 0 8px;
   font-size: 14px;
@@ -168,6 +170,12 @@ const Input = styled.input`
     outline: 2px solid rgba(255, 255, 255, 0.35);
     outline-offset: 1px;
   }
+`
+
+const ErrorText = styled.span`
+  color: ${theme.colors.cream};
+  font-size: 12px;
+  font-style: italic;
 `
 
 /* ─── buttons ────────────────────────────────────────────────── */
@@ -207,22 +215,39 @@ const fmt = (price: number) =>
 
 type Step = 'cart' | 'delivery' | 'payment' | 'confirmation'
 
-interface Delivery {
-  receiver: string
-  description: string
-  city: string
-  zipCode: string
-  number: string
-  complement: string
-}
-
-interface Payment {
-  name: string
-  number: string
-  code: string
-  month: string
-  year: string
-}
+const validationSchema = Yup.object({
+  receiver: Yup.string()
+    .min(5, 'O nome precisa ter ao menos 5 caracteres')
+    .required('Campo obrigatório'),
+  description: Yup.string()
+    .min(5, 'O endereço precisa ter ao menos 5 caracteres')
+    .required('Campo obrigatório'),
+  city: Yup.string()
+    .min(3, 'A cidade precisa ter ao menos 3 caracteres')
+    .required('Campo obrigatório'),
+  zipCode: Yup.string()
+    .matches(/^\d{5}-?\d{3}$/, 'CEP inválido (use 00000-000)')
+    .required('Campo obrigatório'),
+  houseNumber: Yup.string()
+    .matches(/^\d+$/, 'Informe apenas números')
+    .required('Campo obrigatório'),
+  complement: Yup.string(),
+  cardName: Yup.string()
+    .min(5, 'Informe o nome como está no cartão')
+    .required('Campo obrigatório'),
+  cardNumber: Yup.string()
+    .matches(/^\d{16}$/, 'Número do cartão inválido (16 dígitos)')
+    .required('Campo obrigatório'),
+  cardCode: Yup.string()
+    .matches(/^\d{3}$/, 'CVV inválido (3 dígitos)')
+    .required('Campo obrigatório'),
+  expiresMonth: Yup.string()
+    .matches(/^(0?[1-9]|1[0-2])$/, 'Mês inválido')
+    .required('Campo obrigatório'),
+  expiresYear: Yup.string()
+    .matches(/^\d{4}$/, 'Ano inválido (AAAA)')
+    .required('Campo obrigatório'),
+})
 
 /* ─── component ──────────────────────────────────────────────── */
 const Cart = () => {
@@ -230,71 +255,87 @@ const Cart = () => {
   const items = useAppSelector((s) => s.cart.items)
 
   const [step, setStep] = useState<Step>('cart')
-  const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState('')
-
-  const [delivery, setDelivery] = useState<Delivery>({
-    receiver: '', description: '', city: '', zipCode: '', number: '', complement: '',
-  })
-
-  const [payment, setPayment] = useState<Payment>({
-    name: '', number: '', code: '', month: '', year: '',
-  })
 
   const total = items.reduce((acc, i) => acc + i.preco * i.quantidade, 0)
 
-  const updD = (k: keyof Delivery) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setDelivery((p) => ({ ...p, [k]: e.target.value }))
-
-  const updP = (k: keyof Payment) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPayment((p) => ({ ...p, [k]: e.target.value }))
-
-  const handleFinalize = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('https://api-ebac.vercel.app/api/efood/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          products: items.map((i) => ({ id: i.id, price: i.preco })),
-          delivery: {
-            receiver: delivery.receiver,
-            address: {
-              description: delivery.description,
-              city: delivery.city,
-              zipCode: delivery.zipCode,
-              number: Number(delivery.number),
-              complement: delivery.complement,
-            },
-          },
-          payment: {
-            card: {
-              name: payment.name,
-              number: payment.number,
-              code: Number(payment.code),
-              expires: {
-                month: Number(payment.month),
-                year: Number(payment.year),
+  const form = useFormik({
+    initialValues: {
+      receiver: '', description: '', city: '', zipCode: '', houseNumber: '', complement: '',
+      cardName: '', cardNumber: '', cardCode: '', expiresMonth: '', expiresYear: '',
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const res = await fetch('https://api-ebac.vercel.app/api/efood/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            products: items.map((i) => ({ id: i.id, price: i.preco })),
+            delivery: {
+              receiver: values.receiver,
+              address: {
+                description: values.description,
+                city: values.city,
+                zipCode: values.zipCode,
+                number: Number(values.houseNumber),
+                complement: values.complement,
               },
             },
-          },
-        }),
-      })
-      const data = await res.json()
-      setOrderId(data.orderId ?? '')
-      dispatch(clearCart())
-      setStep('confirmation')
-    } catch (err) {
-      console.error('Checkout error:', err)
-    } finally {
-      setLoading(false)
-    }
+            payment: {
+              card: {
+                name: values.cardName,
+                number: values.cardNumber,
+                code: Number(values.cardCode),
+                expires: {
+                  month: Number(values.expiresMonth),
+                  year: Number(values.expiresYear),
+                },
+              },
+            },
+          }),
+        })
+        const data = await res.json()
+        setOrderId(data.orderId ?? '')
+        dispatch(clearCart())
+        setStep('confirmation')
+      } catch (err) {
+        console.error('Checkout error:', err)
+      }
+    },
+  })
+
+  const isErr = (field: keyof typeof form.values) =>
+    Boolean(form.touched[field] && form.errors[field])
+
+  const errMsg = (field: keyof typeof form.values) =>
+    form.touched[field] && form.errors[field] ? form.errors[field] : ''
+
+  const deliveryFields = [
+    'receiver', 'description', 'city', 'zipCode', 'houseNumber',
+  ] as const
+
+  const goToPayment = async () => {
+    form.setTouched(
+      { receiver: true, description: true, city: true, zipCode: true, houseNumber: true },
+      true,
+    )
+    const errors = await form.validateForm()
+    if (deliveryFields.every((f) => !errors[f])) setStep('payment')
   }
 
   const handleClose = () => {
     dispatch(closeCart())
     setTimeout(() => setStep('cart'), 300)
   }
+
+  const fieldProps = (field: keyof typeof form.values) => ({
+    name: field,
+    value: form.values[field],
+    onChange: form.handleChange,
+    onBlur: form.handleBlur,
+    $error: isErr(field),
+  })
 
   /* ── step renders ─────────────────────────────────────────── */
   const renderCart = () =>
@@ -332,104 +373,117 @@ const Cart = () => {
     )
 
   const renderDelivery = () => (
-    <>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        goToPayment()
+      }}
+      noValidate
+    >
       <SectionTitle>Entrega</SectionTitle>
 
       <FormGroup>
-        <Label>Quem irá receber</Label>
-        <Input value={delivery.receiver} onChange={updD('receiver')} required />
+        <Label htmlFor="receiver">Quem irá receber</Label>
+        <Input id="receiver" {...fieldProps('receiver')} />
+        {errMsg('receiver') && <ErrorText>{errMsg('receiver')}</ErrorText>}
       </FormGroup>
 
       <FormGroup>
-        <Label>Endereço</Label>
-        <Input value={delivery.description} onChange={updD('description')} required />
+        <Label htmlFor="description">Endereço</Label>
+        <Input id="description" {...fieldProps('description')} />
+        {errMsg('description') && <ErrorText>{errMsg('description')}</ErrorText>}
       </FormGroup>
 
       <FormGroup>
-        <Label>Cidade</Label>
-        <Input value={delivery.city} onChange={updD('city')} required />
+        <Label htmlFor="city">Cidade</Label>
+        <Input id="city" {...fieldProps('city')} />
+        {errMsg('city') && <ErrorText>{errMsg('city')}</ErrorText>}
       </FormGroup>
 
       <FormRow>
         <FormGroup>
-          <Label>CEP</Label>
-          <Input value={delivery.zipCode} onChange={updD('zipCode')} required />
+          <Label htmlFor="zipCode">CEP</Label>
+          <Input id="zipCode" maxLength={9} {...fieldProps('zipCode')} />
+          {errMsg('zipCode') && <ErrorText>{errMsg('zipCode')}</ErrorText>}
         </FormGroup>
         <FormGroup>
-          <Label>Número</Label>
-          <Input
-            type="number"
-            value={delivery.number}
-            onChange={updD('number')}
-            required
-          />
+          <Label htmlFor="houseNumber">Número</Label>
+          <Input id="houseNumber" inputMode="numeric" maxLength={6} {...fieldProps('houseNumber')} />
+          {errMsg('houseNumber') && <ErrorText>{errMsg('houseNumber')}</ErrorText>}
         </FormGroup>
       </FormRow>
 
       <FormGroup>
-        <Label>Complemento (opcional)</Label>
-        <Input value={delivery.complement} onChange={updD('complement')} />
+        <Label htmlFor="complement">Complemento (opcional)</Label>
+        <Input id="complement" {...fieldProps('complement')} />
       </FormGroup>
 
       <BtnArea>
-        <PrimaryBtn onClick={() => setStep('payment')}>
-          Continuar com o pagamento
+        <PrimaryBtn type="submit">Continuar com o pagamento</PrimaryBtn>
+        <PrimaryBtn type="button" onClick={() => setStep('cart')}>
+          Voltar para o carrinho
         </PrimaryBtn>
-        <PrimaryBtn onClick={() => setStep('cart')}>Voltar para o carrinho</PrimaryBtn>
       </BtnArea>
-    </>
+    </form>
   )
 
   const renderPayment = () => (
-    <>
+    <form onSubmit={form.handleSubmit} noValidate>
       <SectionTitle>Pagamento - Valor a pagar {fmt(total)}</SectionTitle>
 
       <FormGroup>
-        <Label>Nome no cartão</Label>
-        <Input value={payment.name} onChange={updP('name')} required />
+        <Label htmlFor="cardName">Nome no cartão</Label>
+        <Input id="cardName" {...fieldProps('cardName')} />
+        {errMsg('cardName') && <ErrorText>{errMsg('cardName')}</ErrorText>}
       </FormGroup>
 
       <FormRow>
         <FormGroup style={{ flex: 2 }}>
-          <Label>Número do cartão</Label>
-          <Input value={payment.number} onChange={updP('number')} required />
+          <Label htmlFor="cardNumber">Número do cartão</Label>
+          <Input id="cardNumber" inputMode="numeric" maxLength={16} {...fieldProps('cardNumber')} />
+          {errMsg('cardNumber') && <ErrorText>{errMsg('cardNumber')}</ErrorText>}
         </FormGroup>
         <FormGroup>
-          <Label>CVV</Label>
-          <Input value={payment.code} onChange={updP('code')} required />
+          <Label htmlFor="cardCode">CVV</Label>
+          <Input id="cardCode" inputMode="numeric" maxLength={3} {...fieldProps('cardCode')} />
+          {errMsg('cardCode') && <ErrorText>{errMsg('cardCode')}</ErrorText>}
         </FormGroup>
       </FormRow>
 
       <FormRow>
         <FormGroup>
-          <Label>Mês de vencimento</Label>
+          <Label htmlFor="expiresMonth">Mês de vencimento</Label>
           <Input
-            value={payment.month}
-            onChange={updP('month')}
+            id="expiresMonth"
+            inputMode="numeric"
+            maxLength={2}
             placeholder="MM"
-            required
+            {...fieldProps('expiresMonth')}
           />
+          {errMsg('expiresMonth') && <ErrorText>{errMsg('expiresMonth')}</ErrorText>}
         </FormGroup>
         <FormGroup>
-          <Label>Ano de vencimento</Label>
+          <Label htmlFor="expiresYear">Ano de vencimento</Label>
           <Input
-            value={payment.year}
-            onChange={updP('year')}
+            id="expiresYear"
+            inputMode="numeric"
+            maxLength={4}
             placeholder="AAAA"
-            required
+            {...fieldProps('expiresYear')}
           />
+          {errMsg('expiresYear') && <ErrorText>{errMsg('expiresYear')}</ErrorText>}
         </FormGroup>
       </FormRow>
 
       <BtnArea>
-        <PrimaryBtn onClick={handleFinalize} disabled={loading}>
-          {loading ? 'Finalizando pagamento...' : 'Finalizar pagamento'}
+        <PrimaryBtn type="submit" disabled={form.isSubmitting}>
+          {form.isSubmitting ? 'Finalizando pagamento...' : 'Finalizar pagamento'}
         </PrimaryBtn>
-        <PrimaryBtn onClick={() => setStep('delivery')}>
+        <PrimaryBtn type="button" onClick={() => setStep('delivery')}>
           Voltar para a edição de endereço
         </PrimaryBtn>
       </BtnArea>
-    </>
+    </form>
   )
 
   const renderConfirmation = () => (
