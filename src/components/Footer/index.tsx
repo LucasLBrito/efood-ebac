@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
+import logo from '../../assets/logo.svg'
 import { IconInstagram, IconFacebook, IconTwitter } from '../Icons'
 
 const FooterWrapper = styled.footer`
@@ -11,23 +12,9 @@ const FooterWrapper = styled.footer`
   gap: 32px;
 `
 
-const BrandLogo = styled.div`
-  display: inline-flex;
-  align-items: center;
-  font-family: ${theme.fonts.family};
-  font-size: 20px;
-  font-weight: 900;
-  color: ${theme.colors.salmon};
-  border: 2px solid ${theme.colors.salmon};
-  padding: 7px 16px;
-  letter-spacing: 0.5px;
-  background: transparent;
-  user-select: none;
-
-  span {
-    font-weight: 100;
-    margin-right: 2px;
-  }
+const Logo = styled.img`
+  width: 125px;
+  height: 57.5px;
 `
 
 const SocialLinks = styled.div`
@@ -57,9 +44,7 @@ const Copyright = styled.p`
 
 const Footer = () => (
   <FooterWrapper>
-    <BrandLogo>
-      <span>Brito</span>efood
-    </BrandLogo>
+    <Logo src={logo} alt="efood" />
     <SocialLinks>
       <a href="#" aria-label="Instagram">
         <IconInstagram />
@@ -72,8 +57,8 @@ const Footer = () => (
       </a>
     </SocialLinks>
     <Copyright>
-      A BritoEfood é uma plataforma para divulgação de estabelecimentos. A responsabilidade
-      pela entrega e qualidade dos produtos é toda do estabelecimento contratado.
+      A efood é uma plataforma para divulgação de estabelecimentos, a responsabilidade pela
+      entrega, qualidade dos produtos é toda do estabelecimento contratado.
     </Copyright>
   </FooterWrapper>
 )
